@@ -1,0 +1,310 @@
+(defun feature(node)
+  (get node 'feature))
+
+(defun father(node)
+  (get node 'father))
+
+(defun operator(node)
+  (get node 'operator))
+;=======================
+
+
+(defun set-node(node feat-node  father-node op)
+        (putprop node feat-node  'feature)
+        (putprop node father-node 'father)
+        (putprop node op 'operator)
+      node)
+
+
+;======================
+
+(defun putprop (symb val prop)
+  (setf (get symb prop) val))
+
+;==========================
+
+(defun run (initial-state goalfeature lop)
+  (bdf (list (create-first-node initial-state)) nil goalfeature lop))
+;====================================================
+
+(defun create-first-node (initial-state)
+ (set-node (gensym) initial-state nil nil))
+
+
+(defun bdf(open closed goalfeature lop)
+ (cond ((null open) (nosolution closed)) 
+   ((goal (car open) goalfeature) (onesolution open closed))
+   ((bdf  (newopen open closed lop) (newclosed open closed) goalfeature lop))
+  ))
+
+;==================================
+
+;====================================================
+
+(defun nosolution(closed)
+   (print "pas de solution")(kill-all-node closed))
+;====================================================
+
+(defun onesolution(open closed) 
+       (build-solution (car open)) 
+       (kill-all-node (append open closed)))
+;====================================================
+
+(defun goal(node goalfeature)
+  (equal (feature node) goalfeature))
+
+(defun feature(node)
+  (get node 'feature))
+
+(defun operator(node)
+  (get node 'operator))
+
+(defun father(node)
+  (get node 'father))
+
+;====================================================
+
+(defun build-solution (node)
+ (mapc (lambda(n) (print-node n) (terpri)) (list-node node)))
+;====================================================
+ (defun kill-node (node)
+        (remprop node 'feature)
+        (remprop node 'father)
+         (remprop  node 'operator)
+      nil)
+;====================================================
+ (defun kill-all-node (lnode)
+   (mapc 'kill-node lnode))
+;====================================================
+
+;imprime ce que l'on souhaite imprimer d'un noeud
+ (defun print-node (node)
+   (print-operator node)
+   (print-feature node)
+ )
+
+;====================================================
+
+;construit la liste inversee des noeuds conduisant a node
+(defun list-node(node)
+    (append (ancestors node) (list node)))
+
+;====================================================
+ (defun ancestors (nofeaturede)
+  (ancestors-rec node ()))
+
+(defun ancestors-rec (node res)
+  (let ((fathernode (get node 'father) ))
+     (if (null fathernode)
+           res
+           (ancestors-rec fathernode (cons fathernode res)))))
+;====================================================
+(defun print-feature (node)
+  (print (get node 'feature)))  
+;====================================================
+ (defun print-operator (node)
+  (if (operator node) (print (operator node))))
+
+;===============Fonction new node==========================
+
+(defun new-node(node op father-node)
+(let ((feat-node(funcall op (feature father-node))))
+(if feat-node
+(set-node node feat-node  father-node op)
+nil
+)  
+))
+
+;=============================Children===========================
+
+(defun children(node lop)
+(remove nil(mapcar (lambda(x)(new-node (gensym) x node))lop)
+)
+)
+
+;==============seen==========================================
+(defun seen(node lnode)
+(some (lambda(x)(equal (feature x) (feature node))) lnode)
+) 
+
+ 
+;====PArtie 3============
+(defun run (initial-state goalfeature lop)
+  (bdf (list (create-first-node initial-state)) nil goalfeature lop))
+;====================================================
+
+(defun create-first-node (initial-state)
+ (set-node (gensym) initial-state nil nil))
+
+
+(defun bdf(open closed goalfeature lop)
+ (cond ((null open) (nosolution closed)) 
+   ((goal (car open) goalfeature) (onesolution open closed))
+   ((bdf  (newopen open closed lop) (newclosed open closed) goalfeature lop))
+  ))
+
+
+;==============Menage===============
+(defun menage(lchild lold)
+(remove-if (lambda(x)(seen x lold))lchild)
+)
+
+;===========newopen================
+(defun newopen(open closed lop) 
+(append (cdr open) (menage (children (car open) lop) (append open closed)))
+)
+
+;==============newclosed====================
+(defun newclosed(open closed)
+(append closed (list(car open)))
+)
+
+
+;===============EXO1 LEFT MIDDLE RIGHT===============
+(defun inverse(x)
+(if (= x 0)
+1
+0
+)
+)
+
+;====================================================
+
+(defun nosolution(closed)
+
+(print "pas de solution")(kill-all-node closed))
+
+;====================================================
+
+(defun onesolution(open closed)
+
+(build-solution (car open))
+
+(kill-all-node (append open closed)))
+
+;====================================================
+
+(defun goal(node goalfeature)
+
+(equal (feature node) goalfeature))
+
+(defun feature(node)
+
+(get node 'feature))
+
+(defun operator(node)
+
+(get node 'operator))
+
+(defun father(node)
+
+(get node 'father))
+
+;====================================================
+
+(defun build-solution (node)
+
+(mapc (lambda(n) (print-node n) (terpri)) (list-node node)))
+
+;====================================================
+
+(defun kill-node (node)
+
+(remprop node 'feature)
+
+(remprop node 'father)
+
+(remprop node 'operator)
+
+nil)
+
+;====================================================
+
+(defun kill-all-node (lnode)
+
+(mapc 'kill-node lnode))
+
+;==================================================== 
+ (defun print-node (node)
+
+(print-operator node)
+
+(print-feature node)
+
+)
+
+;====================================================
+
+;construit la liste inversee des noeuds conduisant a node
+
+(defun list-node(node)
+
+(append (ancestors node) (list node)))
+
+;====================================================
+
+(defun ancestors (node)
+
+(ancestors-rec node ()))
+
+(defun ancestors-rec (node res)
+
+(let ((fathernode (get node 'father) ))
+
+(if (null fathernode)
+
+res
+
+(ancestors-rec fathernode (cons fathernode res)))))
+
+;====================================================
+
+(defun print-feature (node)
+
+(print (get node 'feature)))
+
+;====================================================
+
+(defun print-operator (node)
+
+(if (operator node) (print (operator node))))
+ 
+(defun left(l)
+(list (inverse (car l)) (inverse (cadr l)) (caddr l) (cadddr l))
+)
+ 
+(defun middle(l)
+(list (car l) (inverse (cadr l)) (inverse(caddr l)) (cadddr l))
+)
+ 
+(defun right(l)
+(list (car l) (cadr l) (inverse(caddr l)) (inverse(cadddr l)))
+)
+
+;==================LES ONE THREE FOUR===============
+
+
+(defun one(l)
+(if(not(null(member 'd (member 'a (list (nth '1 l) (nth '0 l) (nth '2 l) (nth '3 l))))))
+(list (nth '1 l) (nth '0 l) (nth '2 l) (nth '3 l))
+nil
+) 
+)
+
+(defun three(l)
+(if(not(null(member 'd (member 'a (list (nth '0 l) (nth '2 l) (nth '1 l) (nth '3 l))))))
+(list (nth '0 l) (nth '2 l) (nth '1 l) (nth '3 l))
+nil
+) 
+)
+
+(defun four(l)
+(if(not(null(member 'd (member 'a (list (nth '0 l) (nth '3 l) (nth '1 l) (nth '1 l))))))
+(list (nth '0 l) (nth '3 l) (nth '2 l) (nth '1 l))
+nil
+) 
+)
+
+
+
+

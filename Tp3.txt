@@ -1,0 +1,85 @@
+;Ex01
+(defun inverse(x)
+(if (= x 0)
+1
+0
+)
+)
+ 
+ 
+(defun left(l)
+(list (inverse (car l)) (inverse (cadr l)) (caddr l) (cadddr l))
+)
+ 
+(defun middle(l)
+(list (car l) (inverse (cadr l)) (inverse(caddr l)) (cadddr l))
+)
+ 
+(defun right(l)
+(list (car l) (cadr l) (inverse(caddr l)) (inverse(cadddr l)))
+)
+
+;Exo2 A REFAIRE 
+
+
+(defun one(l)
+(if(not(null(member 'd (member 'a (list (nth '1 l) (nth '0 l) (nth '2 l) (nth '3 l))))))
+(list (nth '1 l) (nth '0 l) (nth '2 l) (nth '3 l))
+nil
+) 
+)
+
+(defun three(l)
+(if(not(null(member 'd (member 'a (list (nth '0 l) (nth '2 l) (nth '1 l) (nth '3 l))))))
+(list (nth '0 l) (nth '2 l) (nth '1 l) (nth '3 l))
+nil
+) 
+)
+
+(defun four(l)
+(if(not(null(member 'd (member 'a (list (nth '0 l) (nth '2 l) (nth '1 l) (nth '3 l))))))
+(list (nth '0 l) (nth '3 l) (nth '2 l) (nth '1 l))
+nil
+) 
+)
+
+
+
+;Exo3
+(defun IsValideA(x l)
+(cond 
+	((= (car l) x) nil)
+	((= (car l) (nth '1 l)) nil)
+	((= (car l) (nth '2 l)) nil)
+	((= (nth '2 l) x)nil)
+	(T(list 1 (nth '1 l) (nth '2 l)))
+	
+)
+)
+
+
+(defun 1a(l)
+(IsValideA 1 l)
+)
+
+(defun 1a(l)
+(IsValideA 2 l)
+) 
+
+(defun 1a(l)
+(IsValideA 3 l)
+) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
